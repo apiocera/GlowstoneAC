@@ -1,0 +1,17 @@
+.*
+*~
+*.iml
+*.ipr
+*.iws
+build
+out
+classes
+runtime
+target
+nbproject
+bin
+lib
+doc
+!.gitignore
+!.gitmodules
+!.mailmap
