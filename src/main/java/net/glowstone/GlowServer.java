@@ -235,7 +235,7 @@ public final class GlowServer implements Server {
 		} finally {
 			try {
 				stream.close();
-			} catch (IOException e) {
+			} catch (IOException ignored) {
 			}
 		}
 		config.set("server.view-distance", GlowChunk.VISIBLE_RADIUS);
@@ -440,6 +440,7 @@ public final class GlowServer implements Server {
 		commandMap.register(new SaveCommand(this));
 		commandMap.register(new SayCommand(this));
 		commandMap.register(new GiveCommand(this));
+		commandMap.register(new ClearinvCommand(this));
 		commandMap.removeAllOfType(ReloadCommand.class);
 		commandMap.register(new ReloadCommand(this));
 		commandMap.register(new HelpCommand(this, commandMap.getKnownCommands(false)));
@@ -764,6 +765,10 @@ public final class GlowServer implements Server {
 
 	public ConsoleCommandSender getConsoleSender() {
 		return consoleManager.getSender();
+	}
+
+	public File getWorldContainer() {
+		return new File(".");
 	}
 
 	/**

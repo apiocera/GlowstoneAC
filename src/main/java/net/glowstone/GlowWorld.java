@@ -18,8 +18,8 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -156,7 +156,8 @@ public final class GlowWorld implements World {
 
 	class UpdateWorker implements Runnable {
 		GlowEntity entity;
-		public UpdateWorker (GlowEntity entity) {
+
+		public UpdateWorker(GlowEntity entity) {
 			this.entity = entity;
 		}
 
@@ -171,7 +172,7 @@ public final class GlowWorld implements World {
 	 *
 	 * @param server      World server.
 	 * @param name	The name of the world.
-	 * @param seed        World seed.
+	 * @param seed	World seed.
 	 * @param provider    The world storage provider
 	 * @param environment The environment.
 	 * @param generator   The world generator.
@@ -271,7 +272,7 @@ public final class GlowWorld implements World {
 		ArrayList<Future> futures = new ArrayList<Future>();
 
 		for (GlowEntity entity : temp) futures.add(executor.submit(new UpdateWorker(entity)));
-		for (Future future: futures){
+		for (Future future : futures) {
 			try {
 				future.get();
 			} catch (InterruptedException e) {
@@ -901,6 +902,10 @@ public final class GlowWorld implements World {
 
 	public Difficulty getDifficulty() {
 		return Difficulty.PEACEFUL;
+	}
+
+	public File getWorldFolder() {
+		return new File(name);
 	}
 
 	// level data write
