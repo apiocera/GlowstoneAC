@@ -8,6 +8,7 @@ import org.bukkit.inventory.*;
 import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -92,8 +93,24 @@ public final class CraftingManager {
 	 * @param recipe A recipe known to match the items.
 	 */
 	public void removeItems(ItemStack[] items, Recipe recipe) {
-		// TODO
+		// TODO: Check if this actually works (issue #8 blocks)
+		Collection<MaterialData> materials;
+
+		if (recipe instanceof ShapelessRecipe) materials = ((ShapelessRecipe) recipe).getIngredientList();
+		else if (recipe instanceof ShapedRecipe)
+			materials = ((ShapedRecipe) recipe).getIngredientMap().values();
+		else return;
+
+		for (ItemStack stack : items) {
+			for (MaterialData material : materials) {
+				if (stack.getData() == material) {
+					stack.setAmount(stack.getAmount() - 1);
+					break;
+				}
+			}
+		}
 	}
+
 
 	/**
 	 * Get a shaped or shapeless recipe from the crafting manager.
