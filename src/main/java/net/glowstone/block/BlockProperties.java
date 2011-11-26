@@ -17,7 +17,7 @@ public enum BlockProperties {
 	DIRT(BlockID.DIRT),
 	COBBLESTONE(BlockID.COBBLESTONE),
 	WOOD(BlockID.WOOD),
-	SAPLING(BlockID.SAPLING, passthru()),
+	SAPLING(BlockID.SAPLING, passthru(), instabroken()),
 	BEDROCK(BlockID.BEDROCK),
 	WATER(BlockID.WATER, passthru(), /*physics(),*/ opaque(2)),
 	STATIONARY_WATER(BlockID.STATIONARY_WATER, passthru(), /*physics(),*/ opaque(2)),
@@ -42,16 +42,16 @@ public enum BlockProperties {
 	DETECTOR_RAIL(BlockID.DETECTOR_RAIL, place(), redstone()),
 	PISTON_STICKY_BASE(BlockID.PISTON_STICKY_BASE, place(), redstone()),
 	WEB(BlockID.WEB, passthru()),
-	LONG_GRASS(BlockID.LONG_GRASS, passthru(), drops()),
-	DEAD_BUSH(BlockID.DEAD_BUSH, passthru(), drops()),
+	LONG_GRASS(BlockID.LONG_GRASS, passthru(), drops(), instabroken()),
+	DEAD_BUSH(BlockID.DEAD_BUSH, passthru(), drops(), instabroken()),
 	PISTON_BASE(BlockID.PISTON_BASE, place(), redstone()),
 	PISTON_EXTENSION(BlockID.PISTON_EXTENSION, redstone()),
 	WOOL(BlockID.WOOL),
 	PISTON_MOVING_PIECE(BlockID.PISTON_MOVING_PIECE, redstone()),
-	YELLOW_FLOWER(BlockID.YELLOW_FLOWER, place(), passthru()),
-	RED_ROSE(BlockID.RED_ROSE, place(), passthru()),
-	BROWN_MUSHROOM(BlockID.BROWN_MUSHROOM, place(), passthru()),
-	RED_MUSHROOM(BlockID.RED_MUSHROOM, place(), passthru()),
+	YELLOW_FLOWER(BlockID.YELLOW_FLOWER, place(), passthru(), instabroken()),
+	RED_ROSE(BlockID.RED_ROSE, place(), passthru(), instabroken()),
+	BROWN_MUSHROOM(BlockID.BROWN_MUSHROOM, place(), passthru(), instabroken()),
+	RED_MUSHROOM(BlockID.RED_MUSHROOM, place(), passthru(), instabroken()),
 	GOLD_BLOCK(BlockID.GOLD_BLOCK),
 	IRON_BLOCK(BlockID.IRON_BLOCK),
 	DOUBLE_STEP(BlockID.DOUBLE_STEP, drops(new ItemStack(BlockID.STEP, 2))),
@@ -61,7 +61,7 @@ public enum BlockProperties {
 	BOOKSHELF(BlockID.BOOKSHELF),
 	MOSSY_COBBLESTONE(BlockID.MOSSY_COBBLESTONE),
 	OBSIDIAN(BlockID.OBSIDIAN),
-	TORCH(BlockID.TORCH, place(), passthru(), emitsLight(14)),
+	TORCH(BlockID.TORCH, place(), passthru(), emitsLight(14), instabroken()),
 	FIRE(BlockID.FIRE, passthru(), emitsLight(15), drops()),
 	MOB_SPAWNER(BlockID.MOB_SPAWNER, entity(GlowCreatureSpawner.class)),
 	WOOD_STAIRS(BlockID.WOOD_STAIRS, physics(new StairPhysics()), drops(BlockID.WOOD)),
@@ -86,15 +86,15 @@ public enum BlockProperties {
 	WOOD_PLATE(BlockID.WOOD_PLATE, place(), passthru(), redstone()),
 	REDSTONE_ORE(BlockID.REDSTONE_ORE, interact()),
 	GLOWING_REDSTONE_ORE(BlockID.GLOWING_REDSTONE_ORE, interact()/*, physics()*/),
-	REDSTONE_TORCH_OFF(BlockID.REDSTONE_TORCH_OFF, passthru(), redstone()),
-	REDSTONE_TORCH_ON(BlockID.REDSTONE_TORCH_ON, passthru(), redstone()),
+	REDSTONE_TORCH_OFF(BlockID.REDSTONE_TORCH_OFF, passthru(), redstone(), instabroken()),
+	REDSTONE_TORCH_ON(BlockID.REDSTONE_TORCH_ON, passthru(), redstone(), instabroken()),
 	STONE_BUTTON(BlockID.STONE_BUTTON, passthru(), interact(), redstone()),
 	SNOW(BlockID.SNOW, passthru()),
 	ICE(BlockID.ICE, opaque(2)),
 	SNOW_BLOCK(BlockID.SNOW_BLOCK),
 	CACTUS(BlockID.CACTUS, place(), physics(new SpecialPlaceBelowPhysics(BlockID.CACTUS, BlockID.SAND))),
 	CLAY(BlockID.CLAY, drops(new ItemStack(ItemID.CLAY_BALL, 4))),
-	SUGAR_CANE_BLOCK(BlockID.SUGAR_CANE_BLOCK, place(), drops(ItemID.SUGAR_CANE)),
+	SUGAR_CANE_BLOCK(BlockID.SUGAR_CANE_BLOCK, place(), drops(ItemID.SUGAR_CANE), instabroken()),
 	JUKEBOX(BlockID.JUKEBOX, interact()),
 	FENCE(BlockID.FENCE, place(), opaque(0)),
 	PUMPKIN(BlockID.PUMPKIN, place()),
@@ -104,8 +104,8 @@ public enum BlockProperties {
 	PORTAL(BlockID.PORTAL, place()/*, physics()*/),
 	JACK_O_LANTERN(BlockID.JACK_O_LANTERN, place()),
 	CAKE_BLOCK(BlockID.CAKE_BLOCK, passthru()),
-	DIODE_BLOCK_OFF(BlockID.DIODE_BLOCK_OFF, passthru(), redstone(), interact()),
-	DIODE_BLOCK_ON(BlockID.DIODE_BLOCK_ON, passthru(), redstone(), interact()),
+	DIODE_BLOCK_OFF(BlockID.DIODE_BLOCK_OFF, passthru(), redstone(), interact(), instabroken()),
+	DIODE_BLOCK_ON(BlockID.DIODE_BLOCK_ON, passthru(), redstone(), interact(), instabroken()),
 	LOCKED_CHEST(BlockID.LOCKED_CHEST),
 	TRAP_DOOR(BlockID.TRAP_DOOR, redstone(), interact()),
 	SILVERFISH_BLOCK(BlockID.SILVERFISH_BLOCK, interact()),
@@ -171,6 +171,7 @@ public enum BlockProperties {
 	private boolean interact = false;
 	private boolean place = false;
 	private boolean solid = true;
+	private boolean instantlyBroken = false;
 	private int emitsLight = 0;
 	private int blocksLight = 15;
 	private final int id;
@@ -216,6 +217,10 @@ public enum BlockProperties {
 
 	public boolean isSolid() {
 		return solid;
+	}
+
+	public boolean isInstantlyBroken() {
+		return instantlyBroken;
 	}
 
 	public int emittedLightLevel() {
@@ -317,6 +322,14 @@ public enum BlockProperties {
 		return new Property() {
 			public void apply(BlockProperties p) {
 				p.place = true;
+			}
+		};
+	}
+
+	private static Property instabroken() {
+		return new Property() {
+			public void apply(BlockProperties p) {
+				p.instantlyBroken = true;
 			}
 		};
 	}

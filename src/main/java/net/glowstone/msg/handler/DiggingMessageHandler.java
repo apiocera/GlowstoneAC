@@ -48,7 +48,7 @@ public final class DiggingMessageHandler extends MessageHandler<DiggingMessage> 
 			// TODO: Item interactions
 			BlockDamageEvent event = EventFactory.onBlockDamage(player, block);
 			if (!event.isCancelled()) {
-				blockBroken = event.getInstaBreak() || player.getGameMode() == GameMode.CREATIVE;
+				blockBroken = BlockProperties.get(block.getType()).isInstantlyBroken() || player.getGameMode() == GameMode.CREATIVE;
 			}
 		} else if (message.getState() == DiggingMessage.STATE_DONE_DIGGING) {
 			BlockBreakEvent event = EventFactory.onBlockBreak(block, player);
