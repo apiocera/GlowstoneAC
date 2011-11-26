@@ -441,6 +441,7 @@ public final class GlowServer implements Server {
 		commandMap.register(new SayCommand(this));
 		commandMap.register(new GiveCommand(this));
 		commandMap.register(new ClearinvCommand(this));
+		commandMap.register(new SpawnCommand(this));
 		commandMap.removeAllOfType(ReloadCommand.class);
 		commandMap.register(new ReloadCommand(this));
 		commandMap.register(new HelpCommand(this, commandMap.getKnownCommands(false)));

@@ -44,6 +44,6 @@ public class ClearinvCommand extends GlowCommand {
 
 	@Override
 	public PermissionDefault getPermissionDefault() {
-		return null;
+		return PermissionDefault.OP;
 	}
 }
