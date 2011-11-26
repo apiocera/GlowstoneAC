@@ -1,16 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.glowstone</groupId>
-    <artifactId>glowstone</artifactId>
+    <artifactId>glowstoneac</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Glowstone</name>
-    <url>https://github.com/SpaceManiac/Glowstone</url>
-    
+    <name>GlowstoneAC</name>
+    <url>https://github.com/apiocera/GlowstoneAC</url>
+
     <scm>
-        <connection>scm:git:git://github.com/SpaceManiac/Glowstone.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/SpaceManiac/Glowstone.git</developerConnection>
-        <url>https://github.com/SpaceManiac/Glowstone</url>
+        <connection>scm:git:git://github.com/apiocera/GlowstoneAC.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:apiocera/GlowstoneAC.git</developerConnection>
+        <url>https://github.com/apiocera/GlowstoneAC</url>
     </scm>
 
     <repositories>
@@ -39,14 +40,14 @@
             </snapshots>
         </repository>
     </repositories>
-    
+
     <pluginRepositories>
         <pluginRepository>
             <id>bukkit-plugins</id>
             <url>hhttp://repo.bukkit.org/content/repositories/plugins-release-local/</url>
         </pluginRepository>
     </pluginRepositories>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
@@ -100,7 +101,7 @@
             <version>3.0.1</version>
         </dependency>
     </dependencies>
-    
+
     <build>
         <defaultGoal>clean install</defaultGoal>
         <plugins>
@@ -109,7 +110,7 @@
                 <artifactId>gitdescribe-maven-plugin</artifactId>
                 <version>1.2</version>
                 <configuration>
-                    <outputPrefix>git-Glowstone-</outputPrefix>
+                    <outputPrefix>git-GlowstoneAC-</outputPrefix>
                     <outputPostfix></outputPostfix>
                 </configuration>
                 <executions>
@@ -121,7 +122,7 @@
                     </execution>
                 </executions>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -149,14 +150,14 @@
                     </archive>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>1.4</version>
                 <executions>
-                <execution>
-                    <phase>package</phase>
+                    <execution>
+                        <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
@@ -170,7 +171,7 @@
                     </execution>
                 </executions>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -182,5 +183,5 @@
             </plugin>
         </plugins>
     </build>
-    
+
 </project>

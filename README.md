@@ -4,8 +4,9 @@ Glowstone
 Introduction
 ------------
 
-Glowstone is an open-source implementation of the
-[Minecraft](http://minecraft.net) server software written in Java, originally
+GlowstoneAC (I'll find more suitable name after 10 closed issues) is a more active and
+apt fork of [Glowstone](https://github.com/SpaceManiac/Glowstone), that is an open-source
+implementation of the [Minecraft](http://minecraft.net) server software written in Java, itself in turn
 forked from Graham Edgecombe's now-defunct
 [Lightstone](https://github.com/grahamedgecombe/lightstone) project.
 
@@ -22,7 +23,7 @@ loading Bukkit plugins which interface with these classes.
 Building
 --------
 
-Glowstone can be built with the
+GlowstoneAC can be built with the
 [Java Development Kit](http://oracle.com/technetwork/java/javase/downloads) and
 [Apache Maven](http://maven.apache.org). Maven is also used for dependency
 management.
