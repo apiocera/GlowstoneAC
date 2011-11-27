@@ -239,6 +239,7 @@ public final class GlowServer implements Server {
 			}
 		}
 		config.set("server.view-distance", GlowChunk.VISIBLE_RADIUS);
+		config.set("server.keep-loaded-distance", GlowChunk.KEEP_LOADED_RADIUS);
 		config.set("server.entity-workers", GlowServer.DEFAULT_ENTITY_WORKERS);
 
 		// If the configuration is empty, attempt to migrate non-Glowstone configs
@@ -1236,6 +1237,10 @@ public final class GlowServer implements Server {
 
 	public int getViewDistance() {
 		return config.getInt("server.view-distance", GlowChunk.VISIBLE_RADIUS);
+	}
+
+	public int getKeepLoadedDistance() {
+		return config.getInt("server.keep-loaded-distance", GlowChunk.KEEP_LOADED_RADIUS);
 	}
 
 	public String getLogFile() {

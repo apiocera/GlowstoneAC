@@ -145,6 +145,16 @@ public final class GlowWorld implements World {
 	private final WorldStorageProvider storageProvider;
 
 	/**
+	 * Radius to keep chunks loaded.
+	 */
+	private int keepLoadedRadius = GlowChunk.KEEP_LOADED_RADIUS;
+
+	/**
+	 * Spawn radius.
+	 */
+	private int spawnRadius = 16;
+
+	/**
 	 * The world's UUID
 	 */
 	private final UUID uid;
@@ -153,6 +163,14 @@ public final class GlowWorld implements World {
 	 * Multithreaded entities update support
 	 */
 	private ExecutorService executor;
+
+	public int getBeyondHorizonRadius() {
+		return keepLoadedRadius;
+	}
+
+	public int getSpawnRadius() {
+		return spawnRadius;
+	}
 
 	class UpdateWorker implements Runnable {
 		GlowEntity entity;
@@ -184,6 +202,7 @@ public final class GlowWorld implements World {
 		this.environment = environment;
 		this.executor = executor;
 
+		this.keepLoadedRadius = server.getKeepLoadedDistance();
 		provider.setWorld(this);
 		chunks = new ChunkManager(this, provider.getChunkIoService(), generator);
 		storageProvider = provider;
@@ -215,7 +234,8 @@ public final class GlowWorld implements World {
 		server.getLogger().log(Level.INFO, "Preparing spawn for {0}", name);
 		long loadTime = System.currentTimeMillis();
 
-		int radius = 4 * server.getViewDistance() / 3;
+		spawnRadius = server.getSpawnRadius();
+		int radius = spawnRadius;
 
 		int total = (radius * 2 + 1) * (radius * 2 + 1), current = 0;
 		for (int x = centerX - radius; x <= centerX + radius; ++x) {
@@ -283,6 +303,8 @@ public final class GlowWorld implements World {
 		}
 
 		for (GlowEntity entity : temp) entity.reset();
+		Integer unloaded = getChunkManager().unloadUnusedChunks();
+		//if (unloaded > 0) System.err.println(unloaded + " chunks unloaded");
 
 
 		// We currently tick at 1/4 the speed of regular MC

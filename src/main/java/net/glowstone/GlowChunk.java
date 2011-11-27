@@ -27,6 +27,13 @@ public final class GlowChunk implements Chunk {
 	public static final int VISIBLE_RADIUS = 8;
 
 	/**
+	 * The radius of the chunks that are not unloaded without player in sight.
+	 * It is added to VISIBLE_RADIUS to avoid nasty infinite load/unload loops.
+	 * Used as a default when no custom value is specified.
+	 */
+	public static final int KEEP_LOADED_RADIUS = 16;
+
+	/**
 	 * A chunk key represents the X and Z coordinates of a chunk and implements
 	 * the {@link #hashCode()} and {@link #equals(Object)} methods making it
 	 * suitable for use as a key in a hash table or set.
@@ -238,8 +245,10 @@ public final class GlowChunk implements Chunk {
 	}
 
 	public boolean load(boolean generate) {
-		if (isLoaded()) return true;
-		return world.getChunkManager().loadChunk(x, z, generate);
+		synchronized (this) {
+			if (isLoaded()) return true;
+			return world.getChunkManager().loadChunk(x, z, generate);
+		}
 	}
 
 	public boolean unload() {
@@ -251,19 +260,21 @@ public final class GlowChunk implements Chunk {
 	}
 
 	public boolean unload(boolean save, boolean safe) {
-		if (safe) {
-			if (false /* TODO: if we ought not to unload */) {
-				return false;
+		synchronized (this) {
+			if (safe) {
+				if (false /* TODO: if we ought not to unload */) {
+					return false;
+				}
 			}
+
+			if (save) {
+				world.getChunkManager().forceSave(x, z);
+			}
+
+			// any other pre-unload actions
+
+			types = metaData = skyLight = blockLight = null;
 		}
-
-		if (save) {
-			world.getChunkManager().forceSave(x, z);
-		}
-
-		// any other pre-unload actions
-
-		types = metaData = skyLight = blockLight = null;
 		return true;
 	}
 

@@ -1,14 +1,12 @@
 package net.glowstone;
 
 import net.glowstone.io.ChunkIoService;
+import org.bukkit.entity.Player;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -50,6 +48,11 @@ public final class ChunkManager {
 	private final Random popRandom = new Random();
 
 	/**
+	 * Radius of loaded chunks around the player
+	 */
+	private int chunksAroundPlayer = GlowChunk.KEEP_LOADED_RADIUS;
+
+	/**
 	 * Creates a new chunk manager with the specified I/O service and world
 	 * generator.
 	 *
@@ -60,6 +63,7 @@ public final class ChunkManager {
 		this.world = world;
 		this.service = service;
 		this.generator = generator;
+		this.chunksAroundPlayer = world.getBeyondHorizonRadius();
 	}
 
 	/**
@@ -89,6 +93,7 @@ public final class ChunkManager {
 	 * @return True on success, false on failure.
 	 */
 	public boolean loadChunk(int x, int z, boolean generate) {
+		System.err.println("Loaded chunk " + x + ", " + z);
 		boolean success;
 		try {
 			success = service.read(getChunk(x, z), x, z);
@@ -130,7 +135,6 @@ public final class ChunkManager {
 			EventFactory.onChunkPopulate(chunk);
 			return true;
 		}
-
 		return success;
 	}
 
@@ -230,6 +234,45 @@ public final class ChunkManager {
 			}
 		}
 		return false;
+	}
+
+	public int unloadUnusedChunks() {
+		LinkedList<GlowChunk.Key> toRemove = new LinkedList<GlowChunk.Key>();
+
+		for (Map.Entry<GlowChunk.Key, GlowChunk> chunkEntry : chunks.entrySet()) {
+			boolean keepChunk = false;
+			GlowChunk.Key this_key = chunkEntry.getKey();
+
+			int distance_to_spawn = Math.max(Math.abs((world.getSpawnLocation().getBlockX() >> 4) - this_key.getX()), Math.abs((world.getSpawnLocation().getBlockZ() >> 4) - this_key.getZ()));
+
+			if (distance_to_spawn <= world.getSpawnRadius()) { // if chunk is in the spawn area, keep it
+				continue;
+			}
+
+			for (Player p : world.getPlayers()) {
+				int playerChunkX = p.getEyeLocation().getBlockX() >> 4;
+				int playerChunkZ = p.getEyeLocation().getBlockZ() >> 4;
+				int distance = Math.max(Math.abs(playerChunkX - this_key.getX()), Math.abs(playerChunkZ - this_key.getZ()));
+
+				if (distance < chunksAroundPlayer) {
+					keepChunk = true;
+					break;
+				}
+			}
+
+			if (!keepChunk) toRemove.add(this_key);
+		}
+
+		synchronized (chunks) {
+			for (GlowChunk.Key key : toRemove) {
+				chunks.get(key).unload(true, true);
+				chunks.remove(key);
+				System.err.println("UNLOADED CHUNK " + key.getX() + ", " + key.getZ());
+			}
+		}
+
+		return 0;
+
 	}
 
 	/**
